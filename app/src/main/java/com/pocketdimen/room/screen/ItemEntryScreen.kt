@@ -1,5 +1,6 @@
 package com.pocketdimen.room.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,6 +42,9 @@ fun ItemEntryScreen(
     onItemQuantityChange: (String) -> Unit,
     onSaveClick: () -> Unit
 ) {
+
+
+
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -76,6 +80,7 @@ fun ItemEntryBody(
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large)),
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
@@ -92,7 +97,7 @@ fun ItemEntryBody(
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(R.string.save_action))
+            Text(text = if (inventoryUiState.currentItemId != -1) "Update" else "Save")
         }
     }
 }

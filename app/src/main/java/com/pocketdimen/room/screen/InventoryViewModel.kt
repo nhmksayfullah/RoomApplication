@@ -22,6 +22,16 @@ class InventoryViewModel(private val itemsRepository: ItemsRepository) : ViewMod
         getItemStream()
     }
 
+    fun onDeleteClick(item: Item) {
+
+    }
+
+    fun deleteItem(item: Item) {
+        viewModelScope.launch {
+            itemsRepository.deleteItem(item)
+        }
+    }
+
     fun onItemNameChange(name: String) {
         uiState.update {
             it.copy(
@@ -44,16 +54,35 @@ class InventoryViewModel(private val itemsRepository: ItemsRepository) : ViewMod
         }
     }
 
+    fun onItemIdChange(id: Int) {
+        uiState.update {
+            it.copy(
+                currentItemId = id
+            )
+        }
+    }
+
     fun onSaveClicked() {
         viewModelScope.launch {
             if (uiState.value.currentItemName.isNotBlank()) {
-                itemsRepository.writeItem(
-                    Item(
-                        name = uiState.value.currentItemName,
-                        price = uiState.value.currentItemPrice.toDoubleOrNull() ?: 0.0,
-                        quantity = uiState.value.currentItemQuantity.toIntOrNull() ?: 0
+                if (uiState.value.currentItemId != -1) {
+                    itemsRepository.writeItem(
+                        Item(
+                            id = uiState.value.currentItemId,
+                            name = uiState.value.currentItemName,
+                            price = uiState.value.currentItemPrice.toDoubleOrNull() ?: 0.0,
+                            quantity = uiState.value.currentItemQuantity.toIntOrNull() ?: 0
+                        )
                     )
-                )
+                } else {
+                    itemsRepository.writeItem(
+                        Item(
+                            name = uiState.value.currentItemName,
+                            price = uiState.value.currentItemPrice.toDoubleOrNull() ?: 0.0,
+                            quantity = uiState.value.currentItemQuantity.toIntOrNull() ?: 0
+                        )
+                    )
+                }
             }
         }
     }

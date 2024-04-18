@@ -2,6 +2,7 @@ package com.pocketdimen.room
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -44,11 +45,32 @@ class MainActivity : ComponentActivity() {
 
 
                         composable(Screen.HomeScreen.name) {
-                            HomeScreen(items = uiState.items) {
+                            HomeScreen(
+                                items = uiState.items,
+                                onItemClick = {
+                                    inventoryViewModel.onItemIdChange(it.id)
+                                    inventoryViewModel.onItemNameChange(it.name)
+                                    inventoryViewModel.onItemPriceChange(it.price.toString())
+                                    inventoryViewModel.onItemQuantityChange(it.quantity.toString())
+                                    navController.navigate(Screen.ItemEntryScreen.name)
+                                },
+                                onDeleteClick = {
+                                    inventoryViewModel.deleteItem(it)
+                                }
+                            ) {
                                 navController.navigate(Screen.ItemEntryScreen.name)
                             }
                         }
                         composable(Screen.ItemEntryScreen.name) {
+                            BackHandler(
+                                enabled = true
+                            ) {
+                                inventoryViewModel.onItemNameChange("")
+                                inventoryViewModel.onItemPriceChange("")
+                                inventoryViewModel.onItemQuantityChange("")
+                                inventoryViewModel.onItemIdChange(-1)
+                                navController.navigateUp()
+                            }
                             ItemEntryScreen(
                                 inventoryUiState = uiState ,
                                 onItemNameChange ={
